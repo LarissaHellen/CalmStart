@@ -1,0 +1,944 @@
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+--c1:#7C3AED;--c2:#4F46E5;--c3:#06B6D4;
+--cred:#EF4444;--cyel:#F59E0B;--cgrn:#10B981;
+--bg:#2e4a72;--bg2:#385580;--bg3:#42638f;
+--txt:#FFFFFF;--txt2:#e0eefc;--txt3:#b8d4f0;
+--card:#324f78;--cardb:#3d5e8a;
+}
+body{font-family:system-ui,-apple-system,sans-serif;background:#c8dff5;display:flex;justify-content:center;padding:20px 0;min-height:100vh}
+#app{width:375px;height:780px;background:var(--bg);border-radius:44px;overflow:hidden;position:relative;box-shadow:0 40px 80px rgba(0,0,0,.25),0 0 0 1px rgba(255,255,255,.12);border:6px solid #42638f}
+
+.scr{position:absolute;inset:0;display:none;flex-direction:column;overflow:hidden}
+.scr.on{display:flex}
+
+.sa{flex:1;overflow-y:auto;overflow-x:hidden}
+.sa::-webkit-scrollbar{display:none}
+
+.hdr{padding:48px 20px 20px;flex-shrink:0}
+.hdr-grad{background:linear-gradient(135deg,var(--c1),var(--c2))}
+
+.nb{height:68px;background:var(--bg2);border-top:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:space-around;padding:0 4px;flex-shrink:0}
+.ni{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 10px;border-radius:14px;transition:all .15s;flex:1;position:relative}
+.ni:active{transform:scale(.92)}
+.ni-ic{font-size:20px;line-height:1}
+.ni-lb{font-size:10px;font-weight:600;color:var(--txt3)}
+.ni.act .ni-lb{color:#c4b5fd}
+.ni.act .ni-ic{filter:drop-shadow(0 0 6px rgba(196,181,253,.5))}
+.nc{width:54px;height:54px;border-radius:18px;background:linear-gradient(135deg,var(--c1),var(--c3));display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;margin-top:-10px;gap:1px;flex-shrink:0;transition:all .15s;box-shadow:0 4px 16px rgba(124,58,237,.35)}
+.nc:active{transform:scale(.9)}
+
+.btn{display:flex;align-items:center;justify-content:center;border:none;border-radius:14px;cursor:pointer;font-family:inherit;font-weight:600;transition:all .15s;outline:none}
+.btn:active{transform:scale(.96)}
+.bp{background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;font-size:15px;height:50px;width:100%}
+.bs{height:36px;padding:0 14px;font-size:13px;border-radius:10px;background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.2)}
+.bdng{background:rgba(239,68,68,.15);color:#fca5a5;border:1px solid rgba(239,68,68,.2);height:36px;padding:0 14px;font-size:13px;border-radius:10px}
+.bsuc{background:rgba(16,185,129,.15);color:#6ee7b7;border:1px solid rgba(16,185,129,.2);height:36px;padding:0 14px;font-size:13px;border-radius:10px}
+.bic{width:36px;height:36px;border-radius:10px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.18);color:var(--txt);font-size:16px;transition:all .15s}
+.bic:active{transform:scale(.88)}
+
+.card{background:var(--card);border-radius:20px;border:1px solid rgba(255,255,255,.15);padding:16px}
+.inp{width:100%;height:44px;border:1px solid rgba(255,255,255,.22);border-radius:12px;padding:0 14px;font-family:inherit;font-size:14px;color:var(--txt);background:rgba(255,255,255,.1);outline:none;transition:border-color .15s}
+.inp::placeholder{color:rgba(255,255,255,.45)}
+.inp:focus{border-color:#a78bfa;border-width:1.5px}
+textarea.inp{height:78px;padding:12px 14px;resize:none;line-height:1.5}
+
+.bdg{display:inline-flex;align-items:center;padding:3px 10px;border-radius:8px;font-size:11px;font-weight:700}
+.bg-grn{background:rgba(16,185,129,.22);color:#a7f3d0}
+.bg-org{background:rgba(245,158,11,.22);color:#fde68a}
+.bg-red{background:rgba(239,68,68,.22);color:#fecaca}
+.bg-blu{background:rgba(167,139,250,.22);color:#ddd6fe}
+.bg-cyn{background:rgba(6,182,212,.22);color:#a5f3fc}
+
+.pw{background:rgba(255,255,255,.18);border-radius:99px;height:6px;overflow:hidden}
+.pb{height:100%;border-radius:99px;transition:width .7s cubic-bezier(.4,0,.2,1)}
+
+.sep{height:1px;background:rgba(255,255,255,.15);margin:6px 0}
+
+.bbl{max-width:78%;padding:10px 14px;border-radius:18px;font-size:13px;line-height:1.5}
+.bbl-b{background:rgba(255,255,255,.12);color:var(--txt);border-bottom-left-radius:4px;align-self:flex-start;border:1px solid rgba(255,255,255,.12)}
+.bbl-u{background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;border-bottom-right-radius:4px;align-self:flex-end}
+
+#toast{position:absolute;bottom:84px;left:50%;transform:translateX(-50%) translateY(20px);background:#3d5e8a;border:1px solid rgba(255,255,255,.25);color:#fff;padding:10px 18px;border-radius:14px;font-size:13px;font-weight:600;pointer-events:none;opacity:0;transition:all .3s;z-index:200;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.mo{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:100;display:none;align-items:flex-end}
+.mo.on{display:flex}
+.mb{background:var(--bg2);border-radius:28px 28px 0 0;padding:24px 20px 32px;width:100%;border-top:1px solid rgba(255,255,255,.15)}
+
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pop{0%{transform:scale(0) rotate(-10deg);opacity:0}60%{transform:scale(1.2) rotate(3deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+@keyframes burst{0%{transform:scale(1);opacity:1}100%{transform:scale(3);opacity:0}}
+@keyframes streakFly{0%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-80px) scale(0.5);opacity:0}}
+@keyframes shimmer{0%,100%{opacity:.5}50%{opacity:1}}
+
+.mb{animation:slideUp .28s ease}
+.fi{animation:fadeIn .25s ease both}
+
+#celebration{position:absolute;inset:0;z-index:300;display:none;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.8);backdrop-filter:blur(4px)}
+#cel-inner{animation:pop .5s cubic-bezier(.34,1.56,.64,1) both}
+.streak-num{font-size:72px;font-weight:900;background:linear-gradient(135deg,#f59e0b,#ef4444);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+.cel-msg{font-size:22px;font-weight:700;color:#fff;margin-top:8px;text-align:center}
+.cel-sub{font-size:14px;color:rgba(255,255,255,.7);margin-top:6px;text-align:center}
+.cel-btn{background:linear-gradient(135deg,#7c3aed,#06b6d4);color:#fff;border:none;border-radius:14px;padding:14px 40px;font-size:16px;font-weight:700;cursor:pointer;margin-top:20px;font-family:inherit;transition:all .15s}
+.cel-btn:active{transform:scale(.95)}
+.particle{position:absolute;width:8px;height:8px;border-radius:50%;animation:burst .6s ease-out both}
+
+.dot-ind{width:10px;height:10px;border-radius:50%;flex-shrink:0;position:absolute;top:-3px;right:-3px}
+@keyframes micPulse{0%,100%{box-shadow:0 0 0 0 rgba(124,58,237,.5)}50%{box-shadow:0 0 0 8px rgba(124,58,237,0)}}
+@keyframes micWave{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.4)}}
+@keyframes micActive{0%,100%{background:linear-gradient(135deg,#7c3aed,#06b6d4)}50%{background:linear-gradient(135deg,#ef4444,#f59e0b)}}
+
+.voice-btn{
+  width:42px;height:42px;border-radius:12px;border:none;cursor:pointer;
+  background:rgba(255,255,255,.18);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:all .2s;position:relative;overflow:hidden;
+}
+.voice-btn:active{transform:scale(.88);}
+.voice-btn:active .mic-icon{animation:micActive .4s ease infinite;}
+.voice-btn:active .mic-waves span{animation:micWave .3s ease infinite;}
+.voice-btn:active{animation:micPulse .6s ease infinite;}
+
+.mic-icon{
+  width:28px;height:28px;border-radius:8px;
+  background:linear-gradient(135deg,#7c3aed,#06b6d4);
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:1px;transition:all .2s;
+}
+.mic-bars{display:flex;align-items:flex-end;gap:2px;height:14px;}
+.mic-bars span{
+  display:block;width:2.5px;border-radius:2px;
+  background:#fff;
+  animation:shimmer 1.2s ease infinite;
+}
+.mic-bars span:nth-child(1){height:6px;animation-delay:0s}
+.mic-bars span:nth-child(2){height:10px;animation-delay:.15s}
+.mic-bars span:nth-child(3){height:14px;animation-delay:.3s}
+.mic-bars span:nth-child(4){height:10px;animation-delay:.45s}
+.mic-bars span:nth-child(5){height:6px;animation-delay:.6s}
+
+</style>
+
+<div id="app">
+<div id="toast"></div>
+
+<!-- CELEBRATION -->
+<div id="celebration">
+  <div id="cel-inner">
+    <div style="text-align:center">
+      <div style="font-size:64px;margin-bottom:12px" id="cel-icon">🎯</div>
+      <div class="cel-msg" id="cel-msg">Tarefa concluída!</div>
+      <div class="cel-sub" id="cel-sub">Continue assim, você está arrasando 🔥</div>
+      <button class="cel-btn" onclick="closeCel()">Continuar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== LOGIN ====== -->
+<div id="s-login" class="scr on" style="background:linear-gradient(160deg,#0d0d22,#1a0a3a 50%,#0d1a3a);justify-content:center;padding:0 28px;gap:28px">
+  <div style="text-align:center">
+    <div style="width:90px;height:90px;background:linear-gradient(135deg,#7c3aed,#06b6d4);border-radius:28px;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:42px">🎓</div>
+    <h1 style="color:#fff;font-size:28px;font-weight:800;letter-spacing:-.5px">CalmStart</h1>
+    <p style="color:rgba(255,255,255,.5);font-size:14px;margin-top:8px">Seu guia nos primeiros passos</p>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <button class="btn" onclick="goEst()" style="background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;font-size:16px;height:56px;border-radius:18px;font-weight:700;gap:10px">
+      <span style="font-size:22px">👩‍💼</span> Sou Estagiário
+    </button>
+    <button class="btn" onclick="goGest()" style="background:rgba(255,255,255,.07);color:#fff;font-size:16px;height:56px;border-radius:18px;font-weight:700;gap:10px;border:1px solid rgba(255,255,255,.15)">
+      <span style="font-size:22px">👨‍💼</span> Sou Gestor
+    </button>
+  </div>
+  <p style="color:rgba(255,255,255,.2);font-size:11px;text-align:center">Demo interativo · v2.0</p>
+</div>
+
+<!-- ====== ESTAGIÁRIO ====== -->
+<div id="s-est" class="scr" style="background:var(--bg)">
+
+  <!-- TAREFAS -->
+  <div id="et-tarefas" class="tab-est on" style="display:flex;flex-direction:column;height:100%">
+    <div class="hdr hdr-grad" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <p style="color:rgba(255,255,255,.65);font-size:13px">Olá de volta 👋</p>
+          <h2 style="color:#fff;font-size:22px;font-weight:800;margin-top:2px">Luna</h2>
+          <p style="color:rgba(255,255,255,.6);font-size:13px">Estagiária de Marketing</p>
+        </div>
+        <div style="width:44px;height:44px;border-radius:16px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:18px">L</div>
+      </div>
+      <div style="margin-top:16px;background:rgba(255,255,255,.1);border-radius:16px;padding:14px;border:1px solid rgba(255,255,255,.1)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="color:rgba(255,255,255,.8);font-size:13px;font-weight:600">Progresso hoje</span>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div id="est-dot" style="width:10px;height:10px;border-radius:50%;background:#ef4444"></div>
+            <span id="est-pct" style="color:#fff;font-weight:800;font-size:15px">33%</span>
+          </div>
+        </div>
+        <div class="pw"><div id="est-prog" class="pb" style="width:33%;background:linear-gradient(90deg,#a78bfa,#67e8f9)"></div></div>
+        <p id="est-prog-txt" style="color:rgba(255,255,255,.5);font-size:12px;margin-top:6px">1 de 3 tarefas concluídas</p>
+      </div>
+    </div>
+    <div class="sa" style="padding:14px">
+      <div id="est-task-list" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+  </div>
+
+  <!-- ASSISTENTE -->
+  <div id="et-assistente" class="tab-est" style="display:none;flex-direction:column;height:100%">
+    <div class="hdr" style="background:linear-gradient(135deg,#3b2eb0,#2060c0)">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button onclick="estBack()" class="back-btn">←</button>
+        <div style="width:46px;height:46px;background:linear-gradient(135deg,#7c3aed,#06b6d4);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🤖</div>
+        <div>
+          <h2 style="color:#fff;font-size:19px;font-weight:800">Assistente IA</h2>
+          <p style="color:rgba(255,255,255,.7);font-size:12px">Sempre aqui pra te ajudar</p>
+        </div>
+      </div>
+    </div>
+    <div class="sa" style="padding:14px;display:flex;flex-direction:column;gap:10px" id="chat-msgs"></div>
+    <div style="padding:10px 14px;background:var(--bg2);border-top:1px solid rgba(255,255,255,.1);display:flex;gap:8px;flex-shrink:0">
+      <button class="voice-btn" title="Mensagem de voz"><div class="mic-icon"><div class="mic-bars"><span></span><span></span><span></span><span></span><span></span></div></div></button>
+      <input class="inp" id="chat-inp" placeholder="Pergunte algo..." style="flex:1;height:42px" onkeydown="if(event.key==='Enter')sendChat()"/>
+      <button class="btn bp" onclick="sendChat()" style="width:42px;height:42px;border-radius:12px;font-size:18px">➤</button>
+    </div>
+  </div>
+
+  <!-- DÚVIDAS -->
+  <div id="et-duvidas" class="tab-est" style="display:none;flex-direction:column;height:100%">
+    <div class="hdr" style="background:linear-gradient(135deg,#3b2eb0,#2060c0)">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <button onclick="estBack()" class="back-btn">←</button>
+        <div>
+          <h2 style="color:#fff;font-size:19px;font-weight:800">Minhas Dúvidas</h2>
+          <p style="color:rgba(255,255,255,.7);font-size:12px">Sem vergonha de perguntar!</p>
+        </div>
+      </div>
+    </div>
+    <div class="sa" style="padding:14px">
+      <button class="btn bp" onclick="openMo('mo-nova-duvida')" style="margin-bottom:14px;gap:6px;font-size:14px">+ Nova Dúvida</button>
+      <div id="duvida-list" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+  </div>
+
+  <!-- TUTORIAIS -->
+  <div id="et-tutoriais" class="tab-est" style="display:none;flex-direction:column;height:100%">
+    <div class="hdr" style="background:linear-gradient(135deg,#3b2eb0,#2060c0)">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <button onclick="estBack()" class="back-btn">←</button>
+        <div>
+          <h2 style="color:#fff;font-size:19px;font-weight:800">Tutoriais</h2>
+          <p style="color:rgba(255,255,255,.7);font-size:12px">Aprenda no seu ritmo</p>
+        </div>
+      </div>
+    </div>
+    <div class="sa" style="padding:14px">
+      <input class="inp" id="tut-s" placeholder="Buscar tutorial..." style="margin-bottom:14px" oninput="filterTut(this.value)"/>
+      <div id="tut-list-est" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+  </div>
+
+  <!-- PERFIL -->
+  <div id="et-perfil" class="tab-est" style="display:none;flex-direction:column;height:100%">
+    <div style="padding:48px 20px 24px;background:linear-gradient(135deg,#7c3aed,#4f46e5);flex-shrink:0">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <button onclick="estBack()" class="back-btn">←</button>
+        <span style="color:rgba(255,255,255,.8);font-size:14px;font-weight:600">Perfil</span>
+      </div>
+      <div style="text-align:center">
+        <div style="width:80px;height:80px;background:rgba(255,255,255,.18);border-radius:24px;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:800;color:#fff">L</div>
+        <h2 style="color:#fff;font-size:22px;font-weight:800;margin-top:12px">Luna</h2>
+        <p style="color:rgba(255,255,255,.7);font-size:13px">Estagiária de Marketing</p>
+      </div>
+    </div>
+    <div class="sa" style="padding:14px;display:flex;flex-direction:column;gap:12px">
+      <div class="card">
+        <p style="font-size:12px;color:var(--txt3);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:.5px">Produtividade da semana</p>
+        <div class="pw"><div class="pb" style="width:62%;background:linear-gradient(90deg,#7c3aed,#06b6d4)"></div></div>
+        <p style="font-size:14px;color:var(--txt);margin-top:8px;font-weight:600">62% — Continue assim! 🚀</p>
+      </div>
+      <div class="card" style="display:flex;flex-direction:column;gap:10px">
+        <p style="font-weight:700;color:var(--txt);margin-bottom:2px">Informações</p>
+        <div style="display:flex;justify-content:space-between"><span style="font-size:13px;color:var(--txt3)">Cargo</span><span style="font-size:13px;color:var(--txt);font-weight:600">Estagiária de Marketing</span></div>
+        <div class="sep"></div>
+        <div style="display:flex;justify-content:space-between"><span style="font-size:13px;color:var(--txt3)">Equipe</span><span style="font-size:13px;color:var(--txt);font-weight:600">Growth</span></div>
+        <div class="sep"></div>
+        <div style="display:flex;justify-content:space-between"><span style="font-size:13px;color:var(--txt3)">Gestor</span><span style="font-size:13px;color:var(--txt);font-weight:600">Carlos Souza</span></div>
+        <div class="sep"></div>
+        <div style="display:flex;justify-content:space-between"><span style="font-size:13px;color:var(--txt3)">Início</span><span style="font-size:13px;color:var(--txt);font-weight:600">02/04/2025</span></div>
+      </div>
+      <button class="btn" onclick="logout()" style="background:rgba(239,68,68,.12);color:#fca5a5;border:1px solid rgba(239,68,68,.2);height:46px;border-radius:14px;font-weight:600">Sair da conta</button>
+    </div>
+  </div>
+
+  <!-- NAVBAR EST -->
+  <div class="nb">
+    <div class="ni" id="nb-ea" onclick="estTab('assistente')">
+      <div class="ni-ic">🤖</div>
+      <div class="ni-lb">IA</div>
+    </div>
+    <div class="ni" id="nb-ed" onclick="estTab('duvidas')">
+      <div class="ni-ic">❓</div>
+      <div class="ni-lb">Dúvidas</div>
+    </div>
+    <div class="nc" id="nb-et" onclick="estTab('tarefas')">
+      <div style="font-size:22px">🏠</div>
+      <div style="font-size:9px;color:#fff;font-weight:700">Tarefas</div>
+    </div>
+    <div class="ni" id="nb-etu" onclick="estTab('tutoriais')">
+      <div class="ni-ic">🎥</div>
+      <div class="ni-lb">Tutoriais</div>
+    </div>
+    <div class="ni" id="nb-ep" onclick="estTab('perfil')">
+      <div class="ni-ic">👤</div>
+      <div class="ni-lb">Perfil</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== GESTOR ====== -->
+<div id="s-gest" class="scr" style="background:var(--bg)">
+
+  <!-- EQUIPE -->
+  <div id="gt-dashboard" class="tab-gest on" style="display:flex;flex-direction:column;height:100%">
+    <div class="hdr" style="background:linear-gradient(135deg,#2050a0,#2a70c8)">
+      <p style="color:rgba(255,255,255,.65);font-size:13px">Bom dia 👋</p>
+      <h2 style="color:#fff;font-size:22px;font-weight:800;margin-top:2px">Carlos Souza</h2>
+      <div style="display:flex;gap:10px;margin-top:14px">
+        <div style="flex:1;background:rgba(255,255,255,.18);border-radius:14px;padding:12px;text-align:center;border:1px solid rgba(255,255,255,.2)">
+          <p style="color:#fff;font-size:22px;font-weight:800">3</p>
+          <p style="color:rgba(255,255,255,.65);font-size:11px;margin-top:2px">Estagiários</p>
+        </div>
+        <div style="flex:1;background:rgba(255,255,255,.18);border-radius:14px;padding:12px;text-align:center;border:1px solid rgba(255,255,255,.2)">
+          <p style="color:#fff;font-size:22px;font-weight:800">57%</p>
+          <p style="color:rgba(255,255,255,.65);font-size:11px;margin-top:2px">Média</p>
+        </div>
+        <div style="flex:1;background:rgba(255,255,255,.18);border-radius:14px;padding:12px;text-align:center;border:1px solid rgba(255,255,255,.2)">
+          <p style="color:#fff;font-size:22px;font-weight:800">2</p>
+          <p style="color:rgba(255,255,255,.65);font-size:11px;margin-top:2px">Dúvidas</p>
+        </div>
+      </div>
+    </div>
+    <div class="sa" style="padding:14px">
+      <p style="font-weight:700;color:var(--txt);margin-bottom:12px;font-size:15px">Minha Equipe</p>
+      <div id="intern-list" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+  </div>
+
+  <!-- TAREFAS GESTOR -->
+  <div id="gt-tarefas" class="tab-gest" style="display:none;flex-direction:column;height:100%">
+    <div class="hdr" style="background:linear-gradient(135deg,#2050a0,#2a70c8);display:flex;flex-direction:row;align-items:center;gap:12px;padding-top:52px">
+      <button class="back-btn" onclick="gestBack()" style="flex-shrink:0">←</button>
+      <div>
+        <p id="gest-iname" style="font-weight:700;color:#fff;font-size:15px">Luna</p>
+        <p style="font-size:12px;color:var(--txt3)">Gerenciar tarefas</p>
+      </div>
+    </div>
+    <div class="sa" style="padding:14px">
+      <button class="btn bp" onclick="openMo('mo-nova-tarefa')" style="margin-bottom:14px;gap:6px;font-size:14px">+ Nova Tarefa</button>
+      <div id="gest-task-list" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+  </div>
+
+  <!-- DÚVIDAS GESTOR -->
+  <div id="gt-duvidas" class="tab-gest" style="display:none;flex-direction:column;height:100%">
+    <div class="hdr" style="background:linear-gradient(135deg,#2050a0,#2a70c8)">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <button onclick="gestBack()" class="back-btn">←</button>
+        <div>
+          <h2 style="color:#fff;font-size:19px;font-weight:800">Dúvidas da Equipe</h2>
+          <p style="color:rgba(255,255,255,.7);font-size:12px">Responda e apoie</p>
+        </div>
+      </div>
+    </div>
+    <div class="sa" style="padding:14px;display:flex;flex-direction:column;gap:10px" id="gduvida-list"></div>
+  </div>
+
+  <!-- TUTORIAIS GESTOR -->
+  <div id="gt-tutoriais" class="tab-gest" style="display:none;flex-direction:column;height:100%">
+    <div class="hdr" style="background:linear-gradient(135deg,#2050a0,#2a70c8)">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <button onclick="gestBack()" class="back-btn">←</button>
+        <div>
+          <h2 style="color:#fff;font-size:19px;font-weight:800">Tutoriais</h2>
+          <p style="color:rgba(255,255,255,.7);font-size:12px">Gerencie o conteúdo</p>
+        </div>
+      </div>
+    </div>
+    <div class="sa" style="padding:14px">
+      <button class="btn bp" onclick="openMo('mo-novo-tut')" style="margin-bottom:14px;gap:6px;font-size:14px">+ Adicionar Tutorial</button>
+      <div id="gtut-list" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+  </div>
+
+  <!-- PERFIL GESTOR -->
+  <div id="gt-perfil" class="tab-gest" style="display:none;flex-direction:column;height:100%">
+    <div style="padding:48px 20px 24px;background:linear-gradient(135deg,#2050a0,#2a70c8);flex-shrink:0">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <button onclick="gestBack()" class="back-btn">←</button>
+        <span style="color:rgba(255,255,255,.8);font-size:14px;font-weight:600">Perfil</span>
+      </div>
+      <div style="text-align:center">
+        <div style="width:80px;height:80px;background:rgba(255,255,255,.15);border-radius:24px;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:800;color:#fff">C</div>
+        <h2 style="color:#fff;font-size:22px;font-weight:800;margin-top:12px">Carlos Souza</h2>
+        <p style="color:rgba(255,255,255,.7);font-size:13px">Administrador · RH & Talentos</p>
+      </div>
+    </div>
+    <div class="sa" style="padding:14px;display:flex;flex-direction:column;gap:12px">
+      <div class="card" style="display:flex;flex-direction:column;gap:10px">
+        <p style="font-weight:700;color:var(--txt);margin-bottom:2px">Visão da equipe</p>
+        <div style="display:flex;justify-content:space-between"><span style="font-size:13px;color:var(--txt3)">Estagiários</span><span style="font-size:13px;font-weight:700;color:var(--txt)">3</span></div>
+        <div class="sep"></div>
+        <div style="display:flex;justify-content:space-between"><span style="font-size:13px;color:var(--txt3)">Tarefas criadas</span><span style="font-size:13px;font-weight:700;color:var(--txt)">9</span></div>
+        <div class="sep"></div>
+        <div style="display:flex;justify-content:space-between"><span style="font-size:13px;color:var(--txt3)">Dúvidas respondidas</span><span style="font-size:13px;font-weight:700;color:var(--txt)">3</span></div>
+        <div class="sep"></div>
+        <div style="display:flex;justify-content:space-between"><span style="font-size:13px;color:var(--txt3)">Tutoriais ativos</span><span style="font-size:13px;font-weight:700;color:var(--txt)">5</span></div>
+      </div>
+      <button class="btn" onclick="logout()" style="background:rgba(239,68,68,.12);color:#fca5a5;border:1px solid rgba(239,68,68,.2);height:46px;border-radius:14px;font-weight:600">Sair da conta</button>
+    </div>
+  </div>
+
+  <!-- NAVBAR GEST -->
+  <div class="nb">
+    <div class="ni" id="nb-ga" onclick="gestTab('assistente_view')"><div class="ni-ic">🤖</div><div class="ni-lb">IA</div></div>
+    <div class="ni" id="nb-gd" onclick="gestTab('duvidas')"><div class="ni-ic">❓</div><div class="ni-lb">Dúvidas</div></div>
+    <div class="nc" id="nb-gdash" onclick="gestTab('dashboard')"><div style="font-size:22px">🏠</div><div style="font-size:9px;color:#fff;font-weight:700">Equipe</div></div>
+    <div class="ni" id="nb-gtu" onclick="gestTab('tutoriais')"><div class="ni-ic">🎥</div><div class="ni-lb">Tutoriais</div></div>
+    <div class="ni" id="nb-gp" onclick="gestTab('perfil')"><div class="ni-ic">👤</div><div class="ni-lb">Perfil</div></div>
+  </div>
+</div>
+
+<!-- ====== MODALS ====== -->
+
+<div class="mo" id="mo-nova-duvida">
+  <div class="mb">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <h3 style="font-size:17px;font-weight:700;color:var(--txt)">Nova Dúvida</h3>
+      <button class="bic" onclick="closeMo('mo-nova-duvida')">✕</button>
+    </div>
+    <textarea class="inp" id="inp-nova-dv" placeholder="Qual é a sua dúvida?"></textarea>
+    <button class="btn bp" style="margin-top:12px" onclick="addDuvida()">Enviar</button>
+  </div>
+</div>
+
+<div class="mo" id="mo-nova-tarefa">
+  <div class="mb">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <h3 style="font-size:17px;font-weight:700;color:var(--txt)">Nova Tarefa</h3>
+      <button class="bic" onclick="closeMo('mo-nova-tarefa')">✕</button>
+    </div>
+    <input class="inp" id="inp-tk-t" placeholder="Título da tarefa" style="margin-bottom:10px"/>
+    <textarea class="inp" id="inp-tk-d" placeholder="Descrição"></textarea>
+    <button class="btn bp" style="margin-top:12px" onclick="addTaskGest()">Criar Tarefa</button>
+  </div>
+</div>
+
+<div class="mo" id="mo-coments">
+  <div class="mb" style="max-height:80vh;display:flex;flex-direction:column">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <h3 style="font-size:17px;font-weight:700;color:var(--txt)">Comentários</h3>
+      <button class="bic" onclick="closeMo('mo-coments')">✕</button>
+    </div>
+    <div id="com-list" style="overflow-y:auto;max-height:200px;display:flex;flex-direction:column;gap:8px;margin-bottom:12px"></div>
+    <div style="display:flex;gap:8px">
+      <input class="inp" id="inp-com" placeholder="Adicionar..." style="flex:1;height:42px"/>
+      <button class="btn bp" onclick="addCom()" style="width:42px;height:42px;border-radius:12px">+</button>
+    </div>
+  </div>
+</div>
+
+<div class="mo" id="mo-resp-dv">
+  <div class="mb">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <h3 style="font-size:17px;font-weight:700;color:var(--txt)">Responder</h3>
+      <button class="bic" onclick="closeMo('mo-resp-dv')">✕</button>
+    </div>
+    <p id="resp-dv-q" style="font-size:13px;color:var(--txt2);background:var(--bg3);padding:12px;border-radius:12px;margin-bottom:12px;line-height:1.5"></p>
+    <textarea class="inp" id="inp-resp-dv" placeholder="Sua resposta..."></textarea>
+    <button class="btn bp" style="margin-top:12px" onclick="respDuvida()">Enviar Resposta</button>
+  </div>
+</div>
+
+<div class="mo" id="mo-novo-tut">
+  <div class="mb">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <h3 style="font-size:17px;font-weight:700;color:var(--txt)">Novo Tutorial</h3>
+      <button class="bic" onclick="closeMo('mo-novo-tut')">✕</button>
+    </div>
+    <input class="inp" id="inp-tut-t" placeholder="Título" style="margin-bottom:10px"/>
+    <input class="inp" id="inp-tut-c" placeholder="Categoria"/>
+    <button class="btn bp" style="margin-top:12px" onclick="addTut()">Adicionar</button>
+  </div>
+</div>
+
+<div class="mo" id="mo-tut-detail">
+  <div class="mb">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <h3 id="td-title" style="font-size:17px;font-weight:700;color:var(--txt)"></h3>
+      <button class="bic" onclick="closeMo('mo-tut-detail')">✕</button>
+    </div>
+    <div id="td-body" style="font-size:14px;color:var(--txt2);line-height:1.7"></div>
+  </div>
+</div>
+
+<div class="mo" id="mo-gest-ia">
+  <div class="mb" style="max-height:80vh;display:flex;flex-direction:column">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <h3 style="font-size:17px;font-weight:700;color:var(--txt)">Assistente IA</h3>
+      <button class="bic" onclick="closeMo('mo-gest-ia')">✕</button>
+    </div>
+    <div id="gmsgs" style="overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:10px;max-height:240px;margin-bottom:12px">
+      <div class="bbl bbl-b">Olá, Carlos! Como posso ajudar a gerenciar sua equipe hoje?</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="voice-btn" title="Mensagem de voz"><div class="mic-icon"><div class="mic-bars"><span></span><span></span><span></span><span></span><span></span></div></div></button>
+      <input class="inp" id="ginp" placeholder="Pergunte algo..." style="flex:1;height:42px" onkeydown="if(event.key==='Enter')sendGChat()"/>
+      <button class="btn bp" onclick="sendGChat()" style="width:42px;height:42px;border-radius:12px">➤</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+var E={};
+var streakCount=0;
+var activeTaskId=null;
+var curIntern=0;
+var curRespId=null;
+var estHistory=['tarefas'];
+var gestHistory=['dashboard'];
+
+var interns=[
+  {id:0,name:'Luna',role:'Estagiária de Marketing',pct:33,av:'L'},
+  {id:1,name:'João',role:'Estagiário Administrativo',pct:30,av:'J'},
+  {id:2,name:'Ana',role:'Estagiária Financeira',pct:80,av:'A'}
+];
+
+var tasks=[
+  [{id:0,t:'Pesquisar trends',d:'Pesquise tendências de marketing digital no LinkedIn e Google Trends.',done:true,coms:[]},
+   {id:1,t:'Criar planilha',d:'Monte planilha de controle de posts para redes sociais do mês.',done:false,coms:['Posso usar Google Sheets?']},
+   {id:2,t:'Entregar relatório',d:'Compile relatório semanal de métricas de engajamento.',done:false,coms:[]}],
+  [{id:0,t:'Organizar documentos',d:'Organize os documentos do setor em pastas digitais.',done:false,coms:[]},
+   {id:1,t:'Atualizar planilha RH',d:'Atualize os dados dos colaboradores.',done:false,coms:[]},
+   {id:2,t:'Revisar contratos',d:'Revise os contratos de estágio pendentes.',done:false,coms:[]}],
+  [{id:0,t:'Fechar relatório financeiro',d:'Feche o relatório de março.',done:true,coms:[]},
+   {id:1,t:'Conciliar lançamentos',d:'Concilie os lançamentos bancários da semana.',done:true,coms:[]},
+   {id:2,t:'Atualizar DRE',d:'Atualize o demonstrativo de resultado.',done:false,coms:[]}]
+];
+
+var duvidas=[
+  {id:0,q:'Como usar Excel para fórmulas avançadas?',ans:true,r:'Use PROCV, SOMASE e CONT.SE. Veja o tutorial no app!',au:'Luna'},
+  {id:1,q:'Como me comportar em reunião com clientes?',ans:false,r:'',au:'Luna'},
+  {id:2,q:'Como falar com o gestor quando tenho dificuldade?',ans:false,r:'',au:'João'},
+  {id:3,q:'Qual o prazo para entrega dos relatórios?',ans:true,r:'Todo viernes até 18h.',au:'Ana'}
+];
+
+var tuts=[
+  {id:0,t:'Como usar Excel',c:'Ferramentas',ic:'📊',d:'Aprenda fórmulas básicas, tabelas dinâmicas e gráficos para organizar dados.'},
+  {id:1,t:'Como fazer uma planilha',c:'Ferramentas',ic:'📋',d:'Passo a passo para criar planilhas: formatação, fórmulas e boas práticas.'},
+  {id:2,t:'Como se comportar em reunião',c:'Comunicação',ic:'🎙️',d:'Dicas de postura, comunicação e etiqueta em reuniões presenciais e online.'},
+  {id:3,t:'Comunicação com gestores',c:'Comunicação',ic:'💬',d:'Como reportar progresso, pedir feedback e se comunicar de forma assertiva.'},
+  {id:4,t:'Gestão de tempo',c:'Produtividade',ic:'⏱️',d:'Pomodoro, matriz de Eisenhower e planejamento semanal para estagiários.'}
+];
+
+var botA={
+  'reunião':'Em reuniões, chegue alguns minutos antes e traga anotações. Peça a palavra com educação antes de falar. Você vai arrasar! 💪',
+  'dúvida':'Totalmente normal! Tente pesquisar primeiro. Se persistir, anote e pergunte ao gestor — isso mostra proatividade! 😊',
+  'produtiv':'Experimente Pomodoro: 25min foco + 5min pausa. Liste 3 prioridades ao começar o dia. Funciona muito! ⏱️',
+  'primeiro dia':'Chegue cedo, sorria, anote tudo. Não precisa saber tudo — disposição para aprender é o mais importante! 🌟',
+  'gestor':'Seja direto e objetivo. Mostre que você tentou resolver antes de perguntar. Gestores adoram proatividade! 💙',
+  'tarefa':'Quebre a tarefa em passos menores. Faça um de cada vez. Peça ajuda quando travar por mais de 30 min! 🚀'
+};
+
+function showScr(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');}
+function goEst(){showScr('s-est');renderEstTasks();renderDuvidas();renderTutsEst();initChat();}
+function goGest(){showScr('s-gest');renderInterns();renderGDuvidas();renderGTuts();}
+function logout(){showScr('s-login');}
+
+function estTab(tab){
+  var prev=estHistory[estHistory.length-1];
+  if(prev!==tab)estHistory.push(tab);
+  if(estHistory.length>20)estHistory=estHistory.slice(-20);
+  document.querySelectorAll('.tab-est').forEach(t=>t.style.display='none');
+  document.getElementById('et-'+tab).style.display='flex';
+  document.querySelectorAll('#s-est .ni').forEach(n=>n.classList.remove('act'));
+  var map={assistente:'nb-ea',duvidas:'nb-ed',tarefas:'nb-et',tutoriais:'nb-etu',perfil:'nb-ep'};
+  if(map[tab])document.getElementById(map[tab]).classList.add('act');
+}
+function estBack(){
+  if(estHistory.length>1)estHistory.pop();
+  var tab=estHistory[estHistory.length-1]||'tarefas';
+  document.querySelectorAll('.tab-est').forEach(t=>t.style.display='none');
+  document.getElementById('et-'+tab).style.display='flex';
+  document.querySelectorAll('#s-est .ni').forEach(n=>n.classList.remove('act'));
+  var map={assistente:'nb-ea',duvidas:'nb-ed',tarefas:'nb-et',tutoriais:'nb-etu',perfil:'nb-ep'};
+  if(map[tab])document.getElementById(map[tab]).classList.add('act');
+}
+
+function gestTab(tab){
+  if(tab==='assistente_view'){
+    // Remove active highlight from all nav items before opening modal
+    document.querySelectorAll('#s-gest .ni').forEach(n=>n.classList.remove('act'));
+    openMo('mo-gest-ia');return;
+  }
+  var prev=gestHistory[gestHistory.length-1];
+  if(prev!==tab)gestHistory.push(tab);
+  if(gestHistory.length>20)gestHistory=gestHistory.slice(-20);
+  document.querySelectorAll('.tab-gest').forEach(t=>t.style.display='none');
+  document.getElementById('gt-'+tab).style.display='flex';
+  document.querySelectorAll('#s-gest .ni').forEach(n=>n.classList.remove('act'));
+  var map={dashboard:'nb-gdash',duvidas:'nb-gd',tutoriais:'nb-gtu',perfil:'nb-gp'};
+  if(map[tab])document.getElementById(map[tab]).classList.add('act');
+}
+function gestBack(){
+  if(gestHistory.length>1)gestHistory.pop();
+  var tab=gestHistory[gestHistory.length-1]||'dashboard';
+  document.querySelectorAll('.tab-gest').forEach(t=>t.style.display='none');
+  document.getElementById('gt-'+tab).style.display='flex';
+  document.querySelectorAll('#s-gest .ni').forEach(n=>n.classList.remove('act'));
+  var map={dashboard:'nb-gdash',duvidas:'nb-gd',tutoriais:'nb-gtu',perfil:'nb-gp'};
+  if(map[tab])document.getElementById(map[tab]).classList.add('act');
+}
+
+function openMo(id){document.getElementById(id).classList.add('on');}
+function closeMo(id){document.getElementById(id).classList.remove('on');}
+
+function toast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('on');
+  clearTimeout(t._tid);
+  t._tid=setTimeout(()=>t.classList.remove('on'),2600);
+}
+
+function getDotColor(pct){
+  if(pct<50)return '#ef4444';
+  if(pct<=70)return '#f59e0b';
+  return '#10b981';
+}
+
+function updateEstProgress(){
+  var list=tasks[0];
+  var done=list.filter(x=>x.done).length;
+  var pct=Math.round(done/list.length*100);
+  document.getElementById('est-pct').textContent=pct+'%';
+  document.getElementById('est-prog').style.width=pct+'%';
+  document.getElementById('est-prog-txt').textContent=done+' de '+list.length+' tarefas concluídas';
+  document.getElementById('est-dot').style.background=getDotColor(pct);
+  interns[0].pct=pct;
+}
+
+function renderEstTasks(){
+  var el=document.getElementById('est-task-list');
+  el.innerHTML='';
+  tasks[0].forEach(function(tk){
+    var d=document.createElement('div');
+    d.className='card fi';
+    d.style.cssText='display:flex;flex-direction:column;gap:10px;border-left:3px solid '+(tk.done?'#10b981':'#7c3aed');
+    d.innerHTML='<div style="display:flex;align-items:flex-start;gap:12px">'
+      +'<div onclick="toggleTask('+tk.id+')" style="width:26px;height:26px;border-radius:8px;border:2px solid '+(tk.done?'#10b981':'rgba(255,255,255,.2)')+';background:'+(tk.done?'#10b981':'transparent')+';display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;cursor:pointer;flex-shrink:0;margin-top:1px;transition:all .2s">'+(tk.done?'✓':'')+'</div>'
+      +'<div style="flex:1"><p style="font-weight:700;color:'+(tk.done?'var(--txt3)':'var(--txt)')+';font-size:14px;text-decoration:'+(tk.done?'line-through':'none')+'">'+tk.t+'</p>'
+      +'<p style="font-size:12px;color:var(--txt3);margin-top:4px;line-height:1.4">'+tk.d+'</p></div>'
+      +'<span class="bdg '+(tk.done?'bg-grn':'bg-org')+'">'+(tk.done?'Feito':'Pendente')+'</span></div>'
+      +'<button class="btn bs" style="align-self:flex-end;font-size:12px;gap:4px" onclick="openComs('+tk.id+')">💬 Comentários ('+tk.coms.length+')</button>';
+    el.appendChild(d);
+  });
+  updateEstProgress();
+}
+
+function toggleTask(id){
+  var tk=tasks[0].find(function(t){return t.id===id;});
+  if(!tk)return;
+  if(tk.done){tk.done=false;renderEstTasks();toast('Tarefa reaberta.');return;}
+  tk.done=true;
+  streakCount++;
+  renderEstTasks();
+  showCelebration(tk.t);
+}
+
+function showCelebration(taskName){
+  var cel=document.getElementById('celebration');
+  var icons=['🎯','🔥','⭐','💪','🏆','🚀'];
+  document.getElementById('cel-icon').textContent=icons[Math.floor(Math.random()*icons.length)];
+  document.getElementById('cel-msg').textContent=streakCount>=3?'Você está em chamas! 🔥':'Tarefa concluída!';
+  document.getElementById('cel-sub').textContent=streakCount>=3?'Sequência de '+streakCount+'! Continue mandando bem!':'Continue assim, você está arrasando 💙';
+  cel.style.display='flex';
+  var colors=['#7c3aed','#06b6d4','#f59e0b','#10b981','#ef4444','#f97316'];
+  for(let i=0;i<12;i++){
+    let p=document.createElement('div');
+    p.className='particle';
+    p.style.cssText='position:absolute;left:'+Math.random()*100+'%;top:'+Math.random()*100+'%;background:'+colors[Math.floor(Math.random()*colors.length)]+';animation-delay:'+Math.random()*0.3+'s;width:'+(6+Math.random()*8)+'px;height:'+(6+Math.random()*8)+'px;border-radius:50%;animation:burst .6s ease-out both';
+    cel.appendChild(p);
+    setTimeout(()=>{if(p.parentNode===cel)cel.removeChild(p);},1200);
+  }
+}
+function closeCel(){document.getElementById('celebration').style.display='none';}
+
+function openComs(id){
+  activeTaskId=id;
+  renderComs();
+  openMo('mo-coments');
+}
+function renderComs(){
+  var el=document.getElementById('com-list');el.innerHTML='';
+  var tk=tasks[0].find(function(t){return t.id===activeTaskId;});
+  var c=tk?tk.coms:[];
+  if(!c.length){el.innerHTML='<p style="color:var(--txt3);font-size:13px;text-align:center">Sem comentários ainda.</p>';return;}
+  c.forEach(function(cm,i){
+    var d=document.createElement('div');
+    d.style.cssText='background:var(--bg3);border-radius:10px;padding:10px;display:flex;justify-content:space-between;align-items:center;gap:8px';
+    d.innerHTML='<p style="font-size:13px;color:var(--txt);flex:1">'+cm+'</p><div style="display:flex;gap:4px">'
+      +'<button class="bic" style="font-size:12px" onclick="editCom('+i+')">✏️</button>'
+      +'<button class="bic" style="font-size:12px;background:rgba(239,68,68,.15)" onclick="delCom('+i+')">🗑️</button></div>';
+    el.appendChild(d);
+  });
+}
+function addCom(){
+  var v=document.getElementById('inp-com').value.trim();if(!v)return;
+  var tk=tasks[0].find(function(t){return t.id===activeTaskId;});
+  if(tk){tk.coms.push(v);}
+  document.getElementById('inp-com').value='';
+  renderComs();renderEstTasks();toast('Comentário adicionado!');
+}
+function editCom(i){
+  var tk=tasks[0].find(function(t){return t.id===activeTaskId;});
+  if(!tk)return;
+  var nc=prompt('Editar:',tk.coms[i]);if(nc&&nc.trim()){tk.coms[i]=nc.trim();renderComs();renderEstTasks();}
+}
+function delCom(i){
+  var tk=tasks[0].find(function(t){return t.id===activeTaskId;});
+  if(!tk)return;
+  tk.coms.splice(i,1);renderComs();renderEstTasks();toast('Removido.');
+}
+
+function renderDuvidas(){
+  var el=document.getElementById('duvida-list');el.innerHTML='';
+  duvidas.filter(d=>d.au==='Luna').forEach(function(dv){
+    var d=document.createElement('div');d.className='card fi';
+    d.innerHTML='<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">'
+      +'<p style="font-size:13px;color:var(--txt);flex:1;line-height:1.5">'+dv.q+'</p>'
+      +'<span class="bdg '+(dv.ans?'bg-grn':'bg-org')+'">'+(dv.ans?'Respondida':'Pendente')+'</span></div>'
+      +(dv.ans?'<div style="background:rgba(16,185,129,.08);border-radius:10px;padding:10px;margin-top:8px"><p style="font-size:12px;color:#6ee7b7;line-height:1.5">'+dv.r+'</p></div>':'')
+      +'<div style="display:flex;gap:8px;margin-top:10px">'
+      +'<button class="btn bdng btn-sm" style="height:34px;padding:0 14px;font-size:12px" onclick="delDvEst('+dv.id+')">🗑️ Apagar</button>'
+      +(!dv.ans?'<button class="btn bsuc btn-sm" style="height:34px;padding:0 14px;font-size:12px" onclick="editDvEst('+dv.id+')">✏️ Editar</button>':'')+'</div>';
+    el.appendChild(d);
+  });
+}
+function addDuvida(){
+  var v=document.getElementById('inp-nova-dv').value.trim();if(!v)return;
+  duvidas.push({id:duvidas.length,q:v,ans:false,r:'',au:'Luna'});
+  document.getElementById('inp-nova-dv').value='';
+  closeMo('mo-nova-duvida');renderDuvidas();renderGDuvidas();toast('Dúvida enviada!');
+}
+function delDvEst(id){duvidas=duvidas.filter(x=>x.id!==id);renderDuvidas();renderGDuvidas();toast('Removida.');}
+function editDvEst(id){var dv=duvidas.find(x=>x.id===id);var nc=prompt('Editar:',dv.q);if(nc&&nc.trim()){dv.q=nc.trim();renderDuvidas();renderGDuvidas();}}
+
+function renderTutsEst(){renderTutsFor('tut-list-est');}
+function renderTutsFor(elId){
+  var el=document.getElementById(elId);if(!el)return;el.innerHTML='';
+  tuts.forEach(function(t){
+    var d=document.createElement('div');d.className='card fi';
+    d.style.cssText='display:flex;align-items:center;gap:14px;cursor:pointer';
+    d.onclick=()=>openTutD(t.id);
+    d.innerHTML='<div style="width:46px;height:46px;background:rgba(124,58,237,.15);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">'+t.ic+'</div>'
+      +'<div style="flex:1"><p style="font-weight:700;color:var(--txt);font-size:13px">'+t.t+'</p>'
+      +'<span class="bdg bg-blu" style="margin-top:4px">'+t.c+'</span></div>'
+      +'<span style="color:var(--txt3);font-size:18px">›</span>';
+    el.appendChild(d);
+  });
+}
+function filterTut(q){
+  var el=document.getElementById('tut-list-est');el.innerHTML='';
+  tuts.filter(t=>t.t.toLowerCase().includes(q.toLowerCase())||t.c.toLowerCase().includes(q.toLowerCase())).forEach(function(t){
+    var d=document.createElement('div');d.className='card fi';
+    d.style.cssText='display:flex;align-items:center;gap:14px;cursor:pointer';
+    d.onclick=()=>openTutD(t.id);
+    d.innerHTML='<div style="width:46px;height:46px;background:rgba(124,58,237,.15);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">'+t.ic+'</div>'
+      +'<div style="flex:1"><p style="font-weight:700;color:var(--txt);font-size:13px">'+t.t+'</p>'
+      +'<span class="bdg bg-blu" style="margin-top:4px">'+t.c+'</span></div>'
+      +'<span style="color:var(--txt3)">›</span>';
+    el.appendChild(d);
+  });
+}
+function openTutD(id){
+  var t=tuts.find(x=>x.id===id);
+  document.getElementById('td-title').textContent=t.ic+' '+t.t;
+  document.getElementById('td-body').innerHTML='<span class="bdg bg-blu">'+t.c+'</span><p style="margin-top:12px">'+t.d+'</p>';
+  openMo('mo-tut-detail');
+}
+
+function initChat(){
+  var el=document.getElementById('chat-msgs');el.innerHTML='';
+  appendBbl(el,'Oi, Luna! 👋 Pode me perguntar qualquer coisa sobre o trabalho!','b');
+  var qs=['Como me comportar em reunião?','O que fazer quando tiver em dúvida?','Como ser mais produtiva?','Dicas para o primeiro dia?'];
+  var wrap=document.createElement('div');
+  wrap.style.cssText='display:flex;flex-wrap:wrap;gap:8px';
+  qs.forEach(function(q){
+    var btn=document.createElement('button');btn.className='btn bs';
+    btn.style.cssText='height:32px;padding:0 12px;font-size:12px;border-radius:99px';
+    btn.textContent=q;btn.onclick=function(){quickAsk(q);}
+    wrap.appendChild(btn);
+  });
+  el.appendChild(wrap);
+}
+
+function quickAsk(q){
+  var el=document.getElementById('chat-msgs');
+  appendBbl(el,q,'u');
+  setTimeout(function(){
+    var key=Object.keys(botA).find(k=>q.toLowerCase().includes(k));
+    appendBbl(el,key?botA[key]:'Boa pergunta! Recomendo consultar os tutoriais ou conversar com seu gestor. Você está indo bem! 💙','b');
+    el.scrollTop=el.scrollHeight;
+  },600);
+}
+
+function sendChat(){
+  var inp=document.getElementById('chat-inp');
+  var v=inp.value.trim();if(!v)return;
+  inp.value='';
+  var el=document.getElementById('chat-msgs');
+  appendBbl(el,v,'u');
+  el.scrollTop=el.scrollHeight;
+  setTimeout(function(){
+    var key=Object.keys(botA).find(k=>v.toLowerCase().includes(k));
+    appendBbl(el,key?botA[key]:'Que boa pergunta! Tente verificar os tutoriais disponíveis no app ou fale com seu gestor. 💙','b');
+    el.scrollTop=el.scrollHeight;
+  },700);
+}
+
+function sendGChat(){
+  var el=document.getElementById('gmsgs');
+  var inp=document.getElementById('ginp');
+  var v=inp.value.trim();if(!v)return;
+  inp.value='';
+  appendBbl(el,v,'u');el.scrollTop=el.scrollHeight;
+  setTimeout(function(){
+    appendBbl(el,'Entendido! Você pode verificar o progresso dos estagiários na aba Equipe, ou usar a seção de Dúvidas para se comunicar com eles. 📊','b');
+    el.scrollTop=el.scrollHeight;
+  },700);
+}
+
+function appendBbl(el,txt,who){
+  var d=document.createElement('div');
+  d.className='bbl bbl-'+(who==='u'?'u':'b')+' fi';
+  d.textContent=txt;el.appendChild(d);
+}
+
+function renderInterns(){
+  var el=document.getElementById('intern-list');el.innerHTML='';
+  interns.forEach(function(intern){
+    var dot=getDotColor(intern.pct);
+    var d=document.createElement('div');d.className='card fi';
+    d.innerHTML='<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">'
+      +'<div style="width:44px;height:44px;border-radius:16px;background:rgba(124,58,237,.2);display:flex;align-items:center;justify-content:center;font-weight:800;color:#c4b5fd;font-size:16px">'+intern.av+'</div>'
+      +'<div style="flex:1"><p style="font-weight:700;color:var(--txt);font-size:14px">'+intern.name+'</p><p style="font-size:12px;color:var(--txt3)">'+intern.role+'</p></div>'
+      +'<div style="display:flex;align-items:center;gap:6px"><div style="width:10px;height:10px;border-radius:50%;background:'+dot+'"></div><span style="font-weight:800;color:var(--txt);font-size:14px">'+intern.pct+'%</span></div></div>'
+      +'<div class="pw"><div class="pb" style="width:'+intern.pct+'%;background:linear-gradient(90deg,#7c3aed,#06b6d4)"></div></div>'
+      +'<button class="btn bs" style="margin-top:12px;width:100%;justify-content:center" onclick="viewInternTasks('+intern.id+')">Ver tarefas →</button>';
+    el.appendChild(d);
+  });
+}
+function viewInternTasks(id){
+  curIntern=id;
+  document.getElementById('gest-iname').textContent=interns[id].name+' · '+interns[id].role;
+  renderGTaskList();
+  // Push 'tarefas' only if not already the current tab
+  var prev=gestHistory[gestHistory.length-1];
+  if(prev!=='tarefas')gestHistory.push('tarefas');
+  document.querySelectorAll('.tab-gest').forEach(t=>t.style.display='none');
+  document.getElementById('gt-tarefas').style.display='flex';
+  document.querySelectorAll('#s-gest .ni').forEach(n=>n.classList.remove('act'));
+}
+function renderGTaskList(){
+  var el=document.getElementById('gest-task-list');el.innerHTML='';
+  tasks[curIntern].forEach(function(tk){
+    var d=document.createElement('div');d.className='card fi';
+    d.style.borderLeft='3px solid '+(tk.done?'#10b981':'#7c3aed');
+    d.innerHTML='<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">'
+      +'<div style="flex:1"><p style="font-weight:700;color:'+(tk.done?'var(--txt3)':'var(--txt)')+';font-size:13px;text-decoration:'+(tk.done?'line-through':'none')+'">'+tk.t+'</p>'
+      +'<p style="font-size:12px;color:var(--txt3);margin-top:4px;line-height:1.4">'+tk.d+'</p></div>'
+      +'<span class="bdg '+(tk.done?'bg-grn':'bg-org')+'">'+(tk.done?'Feito':'Pendente')+'</span></div>'
+      +'<button class="btn bdng" style="margin-top:10px;height:34px;padding:0 14px;font-size:12px" onclick="delTaskG('+tk.id+')">🗑️ Excluir</button>';
+    el.appendChild(d);
+  });
+}
+function addTaskGest(){
+  var t=document.getElementById('inp-tk-t').value.trim();
+  var dc=document.getElementById('inp-tk-d').value.trim();
+  if(!t)return;
+  tasks[curIntern].push({id:tasks[curIntern].length,t:t,d:dc||'Sem descrição.',done:false,coms:[]});
+  document.getElementById('inp-tk-t').value='';
+  document.getElementById('inp-tk-d').value='';
+  closeMo('mo-nova-tarefa');renderGTaskList();
+  var done=tasks[curIntern].filter(x=>x.done).length;
+  interns[curIntern].pct=Math.round(done/tasks[curIntern].length*100);
+  renderInterns();toast('Tarefa criada!');
+}
+function delTaskG(id){
+  tasks[curIntern]=tasks[curIntern].filter(x=>x.id!==id);
+  renderGTaskList();
+  var done=tasks[curIntern].filter(x=>x.done).length;
+  if(tasks[curIntern].length>0)interns[curIntern].pct=Math.round(done/tasks[curIntern].length*100);
+  renderInterns();toast('Removida.');
+}
+
+function renderGDuvidas(){
+  var el=document.getElementById('gduvida-list');el.innerHTML='';
+  duvidas.forEach(function(dv){
+    var d=document.createElement('div');d.className='card fi';
+    d.innerHTML='<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px">'
+      +'<p style="font-size:13px;color:var(--txt);flex:1;line-height:1.5">'+dv.q+'</p>'
+      +'<span class="bdg '+(dv.ans?'bg-grn':'bg-org')+'">'+(dv.ans?'Respondida':'Pendente')+'</span></div>'
+      +'<p style="font-size:11px;color:var(--txt3);margin-bottom:8px">De: '+dv.au+'</p>'
+      +(dv.ans?'<div style="background:rgba(16,185,129,.08);border-radius:10px;padding:10px;margin-bottom:8px"><p style="font-size:12px;color:#6ee7b7">'+dv.r+'</p></div>':'')
+      +(!dv.ans?'<button class="btn bp" style="height:36px;font-size:13px" onclick="openRespDv('+dv.id+')">Responder</button>':'<p style="font-size:12px;color:#6ee7b7;font-weight:700">✓ Respondida</p>');
+    el.appendChild(d);
+  });
+}
+function openRespDv(id){
+  curRespId=id;
+  document.getElementById('resp-dv-q').textContent=duvidas.find(x=>x.id===id).q;
+  document.getElementById('inp-resp-dv').value='';
+  openMo('mo-resp-dv');
+}
+function respDuvida(){
+  var v=document.getElementById('inp-resp-dv').value.trim();if(!v)return;
+  var dv=duvidas.find(x=>x.id===curRespId);
+  dv.ans=true;dv.r=v;
+  closeMo('mo-resp-dv');renderGDuvidas();renderDuvidas();toast('Respondida! ✅');
+}
+
+function renderGTuts(){
+  var el=document.getElementById('gtut-list');el.innerHTML='';
+  tuts.forEach(function(t){
+    var d=document.createElement('div');d.className='card fi';
+    d.innerHTML='<div style="display:flex;align-items:center;gap:12px">'
+      +'<div style="width:46px;height:46px;background:rgba(124,58,237,.15);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">'+t.ic+'</div>'
+      +'<div style="flex:1"><p style="font-weight:700;color:var(--txt);font-size:13px">'+t.t+'</p>'
+      +'<span class="bdg bg-blu" style="margin-top:4px">'+t.c+'</span></div></div>'
+      +'<div style="display:flex;gap:8px;margin-top:12px">'
+      +'<button class="btn bsuc" style="height:34px;padding:0 14px;font-size:12px" onclick="editTut('+t.id+')">✏️ Editar</button>'
+      +'<button class="btn bdng" style="height:34px;padding:0 14px;font-size:12px" onclick="delTut('+t.id+')">🗑️ Remover</button></div>';
+    el.appendChild(d);
+  });
+}
+function addTut(){
+  var t=document.getElementById('inp-tut-t').value.trim();
+  var c=document.getElementById('inp-tut-c').value.trim()||'Geral';
+  if(!t)return;
+  var ic={'Excel':'📊','Comunicação':'💬','Produtividade':'⏱️','Ferramentas':'🔧','Geral':'📖'};
+  tuts.push({id:tuts.length,t:t,c:c,ic:ic[c]||'📖',d:'Conteúdo em desenvolvimento. Em breve disponível!'});
+  document.getElementById('inp-tut-t').value='';
+  document.getElementById('inp-tut-c').value='';
+  closeMo('mo-novo-tut');renderGTuts();renderTutsEst();toast('Tutorial adicionado!');
+}
+function editTut(id){var t=tuts.find(x=>x.id===id);var nt=prompt('Editar título:',t.t);if(nt&&nt.trim()){t.t=nt.trim();renderGTuts();renderTutsEst();}}
+function delTut(id){tuts=tuts.filter(x=>x.id!==id);renderGTuts();renderTutsEst();toast('Removido.');}
+
+estTab('tarefas');
+gestTab('dashboard');
+</script>
